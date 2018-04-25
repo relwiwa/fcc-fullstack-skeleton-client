@@ -11,6 +11,7 @@
   "author": "Walter",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.18.0",
     "foundation-sites": "^6.4.3",
     "prop-types": "^15.6.1",
     "react": "^16.3.2",
@@ -22,6 +23,7 @@
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.4",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "css-loader": "^0.28.11",
