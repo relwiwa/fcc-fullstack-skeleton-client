@@ -4,3 +4,5 @@ export const authUserStati = {
   successfulTransfer: 'successfulTransfer',
   erronousTransfer: 'erronousTransfer',
 };
+
+export const localStorageKey = 'userJwt';

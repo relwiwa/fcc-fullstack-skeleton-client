@@ -3,6 +3,9 @@ import { BrowserRouter, Link, Route } from 'react-router-dom';
 
 import '../scss/foundation.scss';
 
+import Dashboard from './protected/Dashboard';
+import ProtectedRoute from './user-auth/protected-route';
+import SigninUser from './user-auth/signin-user';
 import SignupUser from './user-auth/signup-user';
 
 const App = () => {
@@ -22,7 +25,9 @@ const App = () => {
       </div>
     </div>
     <div style={{marginTop: 20}} className="grid-container">
+      <Route path="/signin" component={SigninUser} />
       <Route path="/signup" component={SignupUser} />
+      <ProtectedRoute path="/dashboard" component={Dashboard} />
     </div>
   </Fragment>;
 };

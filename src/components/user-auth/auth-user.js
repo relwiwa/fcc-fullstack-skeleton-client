@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 import { authUserInputData } from '../../config/auth-user-input-data';
 import { authUserStati } from '../../config/words';
@@ -26,7 +27,7 @@ class AuthUser extends Component {
 
   postUserData() {
     const { email, password } = this.state;
-    const { postUrl } = this.props;
+    const { postUrl, successCallback } = this.props;
 
     this.setState({ authUserStatus: authUserStati.transferData });
     axios.post(postUrl, {
@@ -34,6 +35,7 @@ class AuthUser extends Component {
       password: password.value,
     })
     .then(result => {
+      successCallback ? successCallback(result.data.userJwt) : null;
       this.setState({ authUserStatus: authUserStati.successfulTransfer });
     })
     .catch(error => {
@@ -84,6 +86,13 @@ class AuthUser extends Component {
       </div>
     );
   }
+};
+
+AuthUser.propTypes = {
+  authLabel: PropTypes.string.isRequired,
+  postUrl: PropTypes.string.isRequired,
+  successCallback: PropTypes.func,
+  statusMessages: PropTypes.object.isRequired,
 };
 
 export default AuthUser;
