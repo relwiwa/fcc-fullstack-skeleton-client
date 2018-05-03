@@ -5,7 +5,7 @@ import { BrowserRouter, Link, Route, Switch, withRouter } from 'react-router-dom
 
 import { getAuthData, logout } from '../services/auth-service';
 import AuthData from '../models/auth-data';
-import ProtectedRoute from './reusable-components/protected-route';
+import ProtectedRoute from '../reusable-components/protected-route';
 
 import Header from './layout/header';
 import Home from './home';
