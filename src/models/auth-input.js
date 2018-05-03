@@ -1,4 +1,4 @@
-export default class AuthUserInput {
+export default class AuthInput {
   constructor(name, type, label, helpText, validation) {
     this.name = name;
     this.type = type;

@@ -1,98 +1,80 @@
 import axios from 'axios';
-import React, { Component, Fragment } from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
-import { authUserInputData } from '../../config/auth-user-input-data';
 import { authUserStati } from '../../config/words';
+import FormInputHandler from '../../reusable-components/form-input-handler';
+import FormInputState from '../../models/form-input-state';
+
 
 class AuthUser extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      authUserStatus: authUserStati.enterData,
-      email: {
-        value: '',
-        valid: false,
-      },
-      password: {
-        value: '',
-        valid: false,
-      },
-    };
+    this.state = {};
+    this.state.inputsValues = {};
+    const { inputsData } = props;
+    inputsData.map(datum => {
+      this.state.inputsValues[datum.name] = new FormInputState('', false);
+    });
+    this.state.authUserStatus = authUserStati.enterData;
 
-    this.postUserData = this.postUserData.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  postUserData() {
-    const { email, password } = this.state;
-    const { postUrl, successCallback } = this.props;
+  handleChange(newValues) {
+    const { inputsValues } = this.state;
+    const newInputsValues = {...this.state.inputsValues};
+    const inputName = Object.keys(newValues)[0];
+    newInputsValues[inputName] = newValues[inputName];
+    this.setState({ inputsValues: newInputsValues });
+  }
 
-    this.setState({ authUserStatus: authUserStati.transferData });
-    axios.post(postUrl, {
-      email: email.value,
-      password: password.value,
-    })
+  handleSubmit() {
+    const { inputsValues } = this.state;
+    const { postUrl, successCallback } = this.props;
+    const valuesToPost = {};
+    Object.keys(inputsValues).map(key => {
+      valuesToPost[key] = inputsValues[key].value;
+    });
+
+    axios.post(postUrl, valuesToPost)
     .then(result => {
-      successCallback ? successCallback(result.data.userJwt) : null;
-      this.setState({ authUserStatus: authUserStati.successfulTransfer });
+      return successCallback
+      ? successCallback(result.data.userJwt)
+      : this.setState({ authUserStatus: authUserStati.successfulTransfer });
     })
     .catch(error => {
       this.setState({ authUserStatus: authUserStati.erronousTransfer });
     });
+    this.setState({ authUserStatus: authUserStati.transferData });
   }
 
   render() {
-    const { authUserStatus, email, password } = this.state;
-    const { authLabel, statusMessages } = this.props;
-    const allFieldsValid = email.valid && password.valid;
+    const { authUserStatus, inputsValues } = this.state;
+    const { headline, inputsData, statusMessages, submitLabel } = this.props;
 
-    return (
-      <div className="callout primary">
-        <h1>{authLabel}</h1>
-        {authUserStatus === authUserStati.enterData && <p>{statusMessages.enter}</p>}
-        {authUserStatus === authUserStati.transferData && <p><span className="fa fa-spinner fa-spin"></span> {statusMessages.transfer} <span className="fa fa-spinner fa-spin"></span></p>}
-        {authUserStatus === authUserStati.successfulTransfer && <p>{statusMessages.success}</p>}
-        {authUserStatus === authUserStati.erronousTransfer && <p>{statusMessages.error}</p>}
-        {authUserStatus !== authUserStati.successfulTransfer && <div className="grid-x">
-          {authUserInputData.map(datum => {
-            return <div className="cell" key={datum.name}>
-              <label>{datum.label}
-                <input
-                  onChange={(event) => {
-                    const newState = {};
-                    newState[datum.name] = {};
-                    newState[datum.name].value = event.target.value;
-                    newState[datum.name].valid = datum.validation(event.target.value);
-                    this.setState(newState);
-                  }}
-                  type={datum.type}
-                  placeholder={datum.placeholder}
-                  value={this.state[datum.name].value}
-                />
-              </label>
-              <p className="help-text"><span className={'fa ' + (this.state[datum.name].valid ? 'fa-check-square-o' : 'fa-square-o')}></span> {datum.helpText}</p>
-            </div>
-          })}
-          <div className="cell">
-            <a
-              className={'button primary' + (allFieldsValid ? '' : ' disabled')}
-              onClick={allFieldsValid ? () => this.postUserData() : null}
-              tabIndex="0"
-            >{authLabel}</a>
-          </div>
-        </div>}
-      </div>
-    );
+    return <FormInputHandler
+      displayInputs={authUserStatus === authUserStati.successfulTransfer ? false : true}
+      headline={headline}
+      inputsData={inputsData}
+      inputsValues={inputsValues}
+      onChange={this.handleChange}
+      onSubmit={this.handleSubmit}
+      statusMessage={statusMessages[authUserStatus]}
+      submitLabel={submitLabel}        
+    />;
   }
 };
 
 AuthUser.propTypes = {
-  authLabel: PropTypes.string.isRequired,
+  headline: PropTypes.string.isRequired,
+  inputsData: PropTypes.array.isRequired,
   postUrl: PropTypes.string.isRequired,
-  successCallback: PropTypes.func,
   statusMessages: PropTypes.object.isRequired,
+  submitLabel: PropTypes.string.isRequired,
+  successCallback: PropTypes.func,
 };
 
 export default AuthUser;

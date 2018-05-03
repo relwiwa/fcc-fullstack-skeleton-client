@@ -18,8 +18,16 @@ export const getAuthData = () => {
       authData.isAuthenticated = true;
       authData.authId = decodedJwt.data;
     }
+    else {
+      localStorage.removeItem(localStorageKey);
+    }
   }
-  return authData;  
+  return authData;
+}
+
+export const signin = (jwtToken) => {
+  localStorage.setItem(localStorageKey, jwtToken);
+  return getAuthData();
 }
 
 export const logout = (historyObject) => {

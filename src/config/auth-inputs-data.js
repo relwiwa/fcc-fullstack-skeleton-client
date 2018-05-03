@@ -1,7 +1,7 @@
-import AuthUserInput from '../models/auth-user-input';
+import AuthInput from '../models/auth-input';
 
-export const authUserInputData = [
-  new AuthUserInput(
+const authInputsData = [
+  new AuthInput(
     'email',
     'email',
     'Email Address',
@@ -13,7 +13,7 @@ export const authUserInputData = [
       return value.match(emailRegExp) ? true : false;
     },
   ),
-  new AuthUserInput(
+  new AuthInput(
     'password',
     'password',
     'Password',
@@ -29,3 +29,5 @@ export const authUserInputData = [
     },
   ),
 ];
+
+export default authInputsData;
