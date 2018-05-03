@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { BrowserRouter, Link, Route, Switch, withRouter } from 'react-router-dom';
+import { Link, Route, Switch, withRouter } from 'react-router-dom';
 
 import { getAuthData, logout, signin } from '../services/auth-service';
 import AuthData from '../models/auth-data';
@@ -9,6 +9,7 @@ import ProtectedRoute from '../reusable-components/protected-route';
 import Dashboard from './protected/Dashboard';
 import Header from './layout/header';
 import Home from './home';
+import ItemContainer from './items/item-container';
 import SigninUser from './user-auth/signin-user';
 import SignupUser from './user-auth/signup-user';
 
@@ -41,7 +42,7 @@ class App extends Component {
   }
 
   render() {
-    const { isAuthenticated } = this.state;
+    const { authUserId, isAuthenticated } = this.state;
 
     return <Fragment>
       <Header
@@ -56,6 +57,14 @@ class App extends Component {
           />} />}
           {!isAuthenticated && <Route path="/signup" render={() => <SignupUser />} />}
           <ProtectedRoute path="/dashboard" component={Dashboard} />
+          <Route path="/item/:id" render={() => <ItemContainer
+            authUserId={authUserId}
+            isAuthenticated={isAuthenticated}
+          />} />
+          <Route path="/items" render={() => <ItemContainer
+            authUserId={authUserId}
+            isAuthenticated={isAuthenticated} />}
+          />
           <Route render={() => <Home isAuthenticated={isAuthenticated} />} />
         </Switch>
       </div>

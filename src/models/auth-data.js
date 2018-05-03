@@ -1,6 +1,6 @@
 export default class AuthData {
-  constructor(isAuthenticated = null, authId = null) {
+  constructor(isAuthenticated = null, authUserId = null) {
     this.isAuthenticated = isAuthenticated;
-    this.authId = authId;
+    this.authUserId = authUserId;
   }
 }

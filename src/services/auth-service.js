@@ -8,6 +8,10 @@ const isTokenExpired = (jwtExpiresIn) => {
   return (now >= jwtExpiresIn) ? true : false;
 }
 
+export const getToken = () => {
+  return localStorage.getItem(localStorageKey);
+};
+
 export const getAuthData = () => {
   const userJwt = localStorage.getItem(localStorageKey);
   const authData = new AuthData();
@@ -16,7 +20,7 @@ export const getAuthData = () => {
     const isExpired = isTokenExpired(decodedJwt.exp);
     if (!isExpired) {
       authData.isAuthenticated = true;
-      authData.authId = decodedJwt.data;
+      authData.authUserId = decodedJwt.data;
     }
     else {
       localStorage.removeItem(localStorageKey);
