@@ -62,6 +62,22 @@ class App extends Component {
               />
             : <Redirect to="/signin" />;
           }} />
+          <Route path="/item/add" render={() => {
+            return isAuthenticated
+            ? <ItemContainer
+                authUserId={authUserId}
+                isAuthenticated={isAuthenticated}
+              />
+            : <Redirect to="/signin" />;
+          }} />
+          <Route path="/item/edit/:id" render={() => {
+            return isAuthenticated
+            ? <ItemContainer
+                authUserId={authUserId}
+                isAuthenticated={isAuthenticated}
+              />
+            : <Redirect to="/signin" />;
+          }} />
           <Route path="/item/display/:id" render={() => <ItemContainer
             authUserId={authUserId}
             isAuthenticated={isAuthenticated}

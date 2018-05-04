@@ -1,7 +1,7 @@
-import AuthInput from '../models/auth-input';
+import InputData from '../models/input-data';
 
 const authInputsData = [
-  new AuthInput(
+  new InputData(
     'email',
     'email',
     'Email Address',
@@ -13,7 +13,7 @@ const authInputsData = [
       return value.match(emailRegExp) ? true : false;
     },
   ),
-  new AuthInput(
+  new InputData(
     'password',
     'password',
     'Password',

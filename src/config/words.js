@@ -1,4 +1,4 @@
-export const authUserStati = {
+export const formInputStati = {
   enterData: 'enterData',
   transferData: 'transferData',
   successfulTransfer: 'successfulTransfer',

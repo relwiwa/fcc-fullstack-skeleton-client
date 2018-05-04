@@ -5,7 +5,7 @@ const FormInputHandler = ({ displayInputs, headline, inputsData, inputsValues, o
   const checkFieldsValidity = (fields) => {
     let allValid = true;
     fields.map(field => {
-      if (field.valid === false) {
+      if (inputsValues[field.name].valid === false) {
         allValid = false;
       }
     });
@@ -13,7 +13,7 @@ const FormInputHandler = ({ displayInputs, headline, inputsData, inputsValues, o
   };
   const allFieldsValid = checkFieldsValidity(inputsData);
  
-  return <div className="callout primary">
+  return <div className="callout">
     <h1>{headline}</h1>
     <p>{statusMessage}</p>
     {displayInputs && <div className="grid-x">
@@ -37,7 +37,7 @@ const FormInputHandler = ({ displayInputs, headline, inputsData, inputsValues, o
       </div>})}
       <div className="cell">
         <a
-          className={'button primary' + (allFieldsValid ? '' : ' disabled')}
+          className={'button hollow secondary' + (allFieldsValid ? '' : ' disabled')}
           onClick={allFieldsValid ? onSubmit : null}
           type="submit"
           tabIndex="0"

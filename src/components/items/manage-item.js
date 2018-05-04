@@ -1,24 +1,26 @@
 import axios from 'axios';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+
+import { getToken } from '../../services/auth-service';
 
 import { formInputStati } from '../../config/words';
-import FormInputHandler from '../../reusable-components/form-input-handler';
 import FormInputState from '../../models/form-input-state';
+import FormInputHandler from '../../reusable-components/form-input-handler';
 
-
-class AuthUser extends Component {
+class ManageItem extends Component {
   constructor(props) {
     super(props);
 
     this.state = {};
     this.state.inputsValues = {};
-    const { inputsData } = props;
+    const { inputsData, inputsValues } = props;
     inputsData.map(datum => {
-      this.state.inputsValues[datum.name] = new FormInputState('', false);
+      this.state.inputsValues[datum.name] = new FormInputState(inputsValues[datum.name], datum.validation(inputsValues[datum.name]));
     });
     this.state.formInputStatus = formInputStati.enterData;
-
+    
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -33,19 +35,21 @@ class AuthUser extends Component {
 
   handleSubmit() {
     const { inputsValues } = this.state;
-    const { postUrl, successCallback } = this.props;
-    const valuesToPost = {};
+    const { apiMethod, apiUrl, successCallback } = this.props;
+    const valuesToTransfer = {};
     Object.keys(inputsValues).map(key => {
-      valuesToPost[key] = inputsValues[key].value;
+      valuesToTransfer[key] = inputsValues[key].value;
     });
-
-    axios.post(postUrl, valuesToPost)
+    valuesToTransfer.jwtToken = getToken();
+  
+    axios[apiMethod](apiUrl, valuesToTransfer)
     .then(result => {
       return successCallback
-      ? successCallback(result.data.userJwt)
+       ? successCallback(result.data.item)
       : this.setState({ formInputStatus: formInputStati.successfulTransfer });
     })
     .catch(error => {
+      console.log(error);
       this.setState({ formInputStatus: formInputStati.erronousTransfer });
     });
     this.setState({ formInputStatus: formInputStati.transferData });
@@ -66,15 +70,17 @@ class AuthUser extends Component {
       submitLabel={submitLabel}        
     />;
   }
-};
+}
 
-AuthUser.propTypes = {
+ManageItem.propTypes = {
+  apiMethod: PropTypes.string.isRequired,
+  apiUrl: PropTypes.string.isRequired,
   headline: PropTypes.string.isRequired,
   inputsData: PropTypes.array.isRequired,
-  postUrl: PropTypes.string.isRequired,
+  inputsValues: PropTypes.object.isRequired,
   statusMessages: PropTypes.object.isRequired,
   submitLabel: PropTypes.string.isRequired,
   successCallback: PropTypes.func,
 };
 
-export default AuthUser;
+export default withRouter(ManageItem);

@@ -10,6 +10,7 @@ const Header = ({ history, isAuthenticated, onLogout }) => <div className="top-b
   </div>
   <div className="top-bar-right">
     <ul className="menu">
+      {isAuthenticated && <li><Link to="/item/add"><span className="fa fa-plus"></span> Add Item</Link></li>}
       <li><Link to="/items"><span className="fa fa-list"></span> All Items</Link></li>      
       {isAuthenticated && <li><Link to="/items/user"><span className="fa fa-user"></span> My Items</Link></li>}
       {!isAuthenticated && <li><Link to="/signin"><span className="fa fa-sign-in"></span> Signin</Link></li>}

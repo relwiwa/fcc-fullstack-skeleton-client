@@ -3,9 +3,11 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 
-import { getToken } from '../../services/auth-service';
+import AddItem from './add-item';
 import DisplayItem from './display-item';
+import EditItem from './edit-item';
 import Item from '../../models/item';
+import { getToken } from '../../services/auth-service';
 
 class ItemContainer extends Component {
   constructor(props) {
@@ -15,6 +17,7 @@ class ItemContainer extends Component {
     };
     this.getItem = this.getItem.bind(this);
     this.handleDeleteItem = this.handleDeleteItem.bind(this);
+    this.handleAddOrEditItem = this.handleAddOrEditItem.bind(this);
   }
 
   componentDidMount() {
@@ -30,18 +33,26 @@ class ItemContainer extends Component {
     if (id && id !== prevId) {
       this.getItem(id);
     }
+    if (id === prevId && !prevProps.match.url.startsWith('/item/display/')) {
+      this.getItem(id);
+    }
   }
-
+  
   getItem(itemId) {
     axios.get(`http://localhost:3000/item/${itemId}`)
     .then(response => {
       const { item } = response.data;
       this.setState({
         currentItem: new Item(item._id, item.headline, item.content, item.creator),
-        itemList: [],
       });
     })
     .catch(error => console.log(error));
+  }
+  
+  handleAddOrEditItem(itemData) {
+    const { history } = this.props;
+    this.setState({currentItem: new Item(...itemData)})
+    history.push(`/item/display/${itemData._id}`);
   }
 
   handleDeleteItem() {
@@ -62,15 +73,24 @@ class ItemContainer extends Component {
     });
   }
 
+
   render() {
     const { currentItem } = this.state;
-    const { authUserId, isAuthenticated} = this.props;
+    const { authUserId, isAuthenticated, history } = this.props;
 
     return <Switch>
+      <Route path="/item/add" render={() => <AddItem
+        onAddItem={this.handleAddOrEditItem}
+      />} />
+      { currentItem !== null && <Route path="/item/edit/:id" render={() => <EditItem
+        item={currentItem}
+        onEditItem={this.handleAddOrEditItem}
+      />} />}
       { currentItem !== null && <Route path="/item/display/:id" render={() => <DisplayItem
         authUserOwnsItem={(isAuthenticated && authUserId === currentItem.creator) ? true : false}
         item={currentItem}
         onDeleteItem={this.handleDeleteItem}
+        onEditItem={() => history.push(`/item/edit/${currentItem.id}`)}
       />} />}
     </Switch>;
   }
