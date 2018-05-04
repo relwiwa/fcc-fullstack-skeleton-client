@@ -1,5 +1,5 @@
 class Item {
-  constructor(id, headline, content, creator) {
+  constructor(id, headline, content = null, creator = null) {
     this.id = id;
     this.headline = headline;
     this.content = content;

@@ -3,22 +3,17 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 
-import { isStringOrNull, isTrueFalseOrNull } from '../../services/prop-types-service';
 import { getToken } from '../../services/auth-service';
 import DisplayItem from './display-item';
 import Item from '../../models/item';
-import ItemList from './item-list';
-import ItemListItem from '../../models/item-list-item';
 
 class ItemContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      itemList: [],
       currentItem: null,
     };
     this.getItem = this.getItem.bind(this);
-    this.getItemList = this.getItemList.bind(this);
     this.handleDeleteItem = this.handleDeleteItem.bind(this);
   }
 
@@ -27,9 +22,6 @@ class ItemContainer extends Component {
     if (id) {
       this.getItem(id);
     }
-    if (this.props.match.url === '/items') {
-      this.getItemList();
-    }
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -37,9 +29,6 @@ class ItemContainer extends Component {
     const { id: prevId } = prevProps.match.params;
     if (id && id !== prevId) {
       this.getItem(id);
-    }
-    if (this.props.match.url === '/items' && this.state.itemList.length === 0) {
-      this.getItemList();
     }
   }
 
@@ -50,21 +39,6 @@ class ItemContainer extends Component {
       this.setState({
         currentItem: new Item(item._id, item.headline, item.content, item.creator),
         itemList: [],
-      });
-    })
-    .catch(error => console.log(error));
-  }
-
-  getItemList() {
-    axios.get('http://localhost:3000/items')
-    .then(response => {
-      const { items } = response.data;
-      const itemList = items.map(item => {
-        return new ItemListItem(item._id, item.headline);
-      });
-      this.setState({
-        currentItem: null,
-        itemList,
       });
     })
     .catch(error => console.log(error));
@@ -89,24 +63,22 @@ class ItemContainer extends Component {
   }
 
   render() {
-    const { currentItem, itemList } = this.state;
+    const { currentItem } = this.state;
     const { authUserId, isAuthenticated} = this.props;
 
     return <Switch>
-      { currentItem !== null && <Route path="/item/:id/display" render={() => <DisplayItem
+      { currentItem !== null && <Route path="/item/display/:id" render={() => <DisplayItem
         authUserOwnsItem={(isAuthenticated && authUserId === currentItem.creator) ? true : false}
         item={currentItem}
         onDeleteItem={this.handleDeleteItem}
       />} />}
-      <Route path="/items" render={() => <ItemList items={itemList} />} />
     </Switch>;
   }
 }
 
 ItemContainer.propTypes = {
-  authUserId: isStringOrNull,
-  isAuthenticated: isTrueFalseOrNull, 
+  authUserId: PropTypes.string.isRequired,
+  isAuthenticated: PropTypes.bool.isRequired,
 };
 
 export default withRouter(ItemContainer);
-
