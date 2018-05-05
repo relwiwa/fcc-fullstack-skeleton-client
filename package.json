@@ -4,9 +4,9 @@
   "description": "The client-side skeleton for developing full-stack freeCodeCamp projects",
   "main": "index.js",
   "scripts": {
-    "build": "npm run clean && webpack --env=production --config=fcc-webpack-config/webpack.config.js",
+    "build": "npm run clean && webpack --env=production --config=webpack-config/webpack.config.js",
     "clean": "rimraf build",
-    "serve": "webpack-dev-server --env=development --config=fcc-webpack-config/webpack.config.js"
+    "serve": "webpack-dev-server --env=development --config=webpack-config/webpack.config.js"
   },
   "author": "Walter",
   "license": "MIT",
